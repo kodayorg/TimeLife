@@ -4,7 +4,7 @@
 
 ## Установка
 
-Установочный EXE пока не опубликован. После публикации его можно будет скачать в разделе [Releases](https://github.com/kodayorg/TimeLife/releases).
+Установщик доступен в разделе [Releases](https://github.com/kodayorg/TimeLife/releases/tag/v0.1.17-preview). Текущая версия — неподписанная Preview: Windows может показать предупреждение SmartScreen или «Неизвестный издатель».
 
 1. Скачайте установочный EXE TimeLife.
 2. Запустите файл и следуйте инструкциям установщика.
