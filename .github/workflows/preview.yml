@@ -1,0 +1,123 @@
+name: Windows Preview
+
+on:
+  push:
+    branches: [main, codex/preview-release]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'build/**'
+      - '.github/workflows/preview.yml'
+      - 'package.json'
+      - 'pnpm-*.yaml'
+      - 'release-publisher.json'
+      - 'third-party-overrides/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a new unsigned Preview release
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: '11.25.0'
+          run_install: false
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - run: pnpm install --frozen-lockfile
+      - run: node node_modules/electron/install.js
+      - name: Unit tests
+        run: pnpm test
+      - name: Prepare legal resources and build unsigned installer
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          node scripts/prepare-distribution.cjs
+          pnpm exec electron-builder --win nsis --publish never
+      - name: Verify packaged app
+        shell: pwsh
+        run: |
+          $appPath = Join-Path $PWD 'release/win-unpacked/TimeLife.exe'
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $installer = Join-Path $PWD "release/TimeLife-Preview-$version.exe"
+          foreach ($file in @($appPath, $installer)) {
+            $signature = Get-AuthenticodeSignature -LiteralPath $file
+            if ($signature.Status -ne 'NotSigned') { throw "Expected unsigned Preview: $file" }
+          }
+          $process = Start-Process -FilePath $appPath -ArgumentList '--smoke' -WindowStyle Hidden -PassThru -RedirectStandardOutput smoke-out.txt -RedirectStandardError smoke-err.txt
+          if (-not $process.WaitForExit(90000)) { $process.Kill(); throw 'Packaged smoke timed out' }
+          Get-Content smoke-out.txt
+          Get-Content smoke-err.txt
+          if ($process.ExitCode -ne 0) { throw "Packaged smoke failed: $($process.ExitCode)" }
+      - name: Package sources, licenses and checksums
+        run: |
+          python scripts/source-bundle.py
+          python scripts/preview-assets.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: TimeLife-Preview-${{ steps.version.outputs.version }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            release/TimeLife-Preview-*.exe
+            release/TimeLife-Source-*.zip
+            release/TimeLife-Legal-*.zip
+            release/SHA256SUMS.txt
+            release/preview-build.json
+            release/preview-notes.md
+
+  publish:
+    needs: build
+    if: github.repository == 'kodayorg/TimeLife' && ((github.event_name == 'push' && github.ref == 'refs/heads/codex/preview-release') || (github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: TimeLife-Preview-${{ needs.build.outputs.version }}
+          path: preview
+      - name: Publish new prerelease without replacing existing files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+          VERSION: ${{ needs.build.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v${VERSION}-preview"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to replace it. Increment the version for a new build."
+            exit 1
+          fi
+          gh release create "$tag" preview/*.exe preview/*.zip preview/SHA256SUMS.txt preview/preview-build.json --target "$SOURCE_SHA" --title "TimeLife ${VERSION} Preview (unsigned)" --notes-file preview/preview-notes.md --prerelease --latest=false
