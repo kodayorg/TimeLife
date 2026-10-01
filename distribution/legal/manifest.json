@@ -1,6 +1,6 @@
 {
   "version": "0.1.17",
-  "draft": true,
+  "draft": false,
   "components": [
     {
       "name": "@touch4it/ical-timezones",
