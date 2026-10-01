@@ -7,6 +7,7 @@ import zipfile
 
 root = Path(__file__).resolve().parent.parent
 version = json.loads((root / 'package.json').read_text(encoding='utf-8'))['version']
+documents_approved = json.loads((root / 'release-publisher.json').read_text(encoding='utf-8'))['documentsApproved']
 release = root / 'release'
 installer = release / f'TimeLife-Preview-{version}.exe'
 sources = release / f'TimeLife-Source-{version}.zip'
@@ -39,7 +40,7 @@ notes = f'''TimeLife — календарь для Windows 11 с синхрон�
 
 Пароль iCloud защищён Windows DPAPI. Локальные файлы событий не зашифрованы. Перед проверкой синхронизации сохраните важные события: это тестовая версия.
 
-В архиве **{legal_zip.name}** находятся условия использования, политика конфиденциальности, лицензии компонентов и исходники MPL. Документы пока отмечены как проект и ожидают проверки издателем.
+В архиве **{legal_zip.name}** находятся условия использования, политика конфиденциальности, лицензии компонентов и исходники MPL. {'Издатель подтвердил условия использования и политику конфиденциальности.' if documents_approved else 'Документы пока отмечены как проект и ожидают проверки издателем.'}
 
 **{sources.name}** содержит исходники приложения и документы, включая лицензии Electron/Chromium. Собственный код — MIT; зависимости сохраняют свои лицензии.
 
@@ -49,7 +50,7 @@ Windows 11 x64. Системный Acrylic требует Windows 11 22H2 или
 
 ---
 
-Unsigned test build for Windows 11 x64. Windows may display SmartScreen or unknown-publisher warnings. No SignPath signature is provided. Account credentials use Windows DPAPI; local event files are not encrypted. Legal documents are included as drafts pending publisher review. Keep a copy of important events before testing synchronization.
+Unsigned test build for Windows 11 x64. Windows may display SmartScreen or unknown-publisher warnings. No SignPath signature is provided. Account credentials use Windows DPAPI; local event files are not encrypted. {'The publisher has reviewed and confirmed the included terms and privacy policy.' if documents_approved else 'Legal documents are included as drafts pending publisher review.'} Keep a copy of important events before testing synchronization.
 '''
 (release / 'preview-notes.md').write_text(notes, encoding='utf-8')
 print(f'Prepared {len(assets)} Preview assets and SHA-256 checksums')

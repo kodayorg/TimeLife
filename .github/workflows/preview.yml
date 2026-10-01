@@ -3,16 +3,6 @@ name: Windows Preview
 on:
   push:
     branches: [main, codex/preview-release]
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - 'scripts/**'
-      - 'build/**'
-      - '.github/workflows/preview.yml'
-      - 'package.json'
-      - 'pnpm-*.yaml'
-      - 'release-publisher.json'
-      - 'third-party-overrides/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
