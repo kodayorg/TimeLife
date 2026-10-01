@@ -1,6 +1,6 @@
 TimeLife 0.1.17 — free, non-commercial calendar by Koda Yorg; contact kodayorg@gmail.com.
 
-PREVIEW: documents are awaiting publisher review. This installer is not a public release.
+UNSIGNED PREVIEW: test version; legal documents are awaiting publisher review before a stable release.
 
 TimeLife own code uses the MIT license, permitting use, modification and redistribution, including commercial use, with license notices preserved. Third-party components keep their original licenses, including MPL-2.0 rights. No subscriptions or purchases. iCloud requires your Apple Account and an app-specific password. Queued changes may require conflict resolution. The app stays in the tray when its window is closed. Account passwords are encrypted with Windows DPAPI; event files and backups are not encrypted. Disconnect removes the cloud cache and credentials, preserving local events. Uninstall preserves the profile. This is supplied as-is to the extent allowed by law; mandatory user rights are not excluded.
 
