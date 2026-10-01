@@ -2,7 +2,7 @@
 
 Project: TimeLife. Maintainer, reviewer and release approver: Koda Yorg, kodayorg@gmail.com.
 
-Status: applying for SignPath Foundation signing is planned; no application has been submitted or accepted and no signing certificate is currently available. No current installer is represented as signed by SignPath. Public source repository: https://github.com/kodayorg/TimeLife .
+Status: the SignPath Foundation application was submitted on 1 October 2026; the form confirmed receipt. Review is pending. The project has not yet been accepted and no signing certificate is currently available. No current installer is represented as signed by SignPath. Public source repository: https://github.com/kodayorg/TimeLife .
 
 All external contributions require maintainer review. Repository and signing accounts must use MFA. A public release requires human approval, a verifiable build from the reviewed source revision, valid timestamped signatures on the application and installer, and passing release checks. Third-party binaries must not be falsely presented as our own. Windows signature validation and matching the recorded expected signer subject are checked after signing.
 
