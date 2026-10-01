@@ -1,0 +1,2 @@
+const pkg=require('../package.json'),publisher=require('../release-publisher.json');
+module.exports={...pkg.build,forceCodeSigning:true,nsis:{...pkg.build.nsis,artifactName:'TimeLife-Setup-${version}.${ext}'},win:{...pkg.build.win,signExecutable:true,publisherName:publisher.publisherName,...(!process.env.CSC_LINK&&publisher.certificateSubjectName?{certificateSubjectName:publisher.certificateSubjectName}:{})}};

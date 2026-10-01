@@ -1,0 +1,15 @@
+{
+  "channel": "exe",
+  "publisherName": "Koda Yorg",
+  "supportEmail": "kodayorg@gmail.com",
+  "countries": [
+    "Worldwide"
+  ],
+  "certificateSubjectName": "",
+  "documentsApproved": false,
+  "publisherCountry": "Russia",
+  "expectedSignerSubject": "",
+  "signingRoute": "SignPath Foundation application",
+  "repositoryUrl": "https://github.com/kodayorg/TimeLife",
+  "signingApproved": false
+}

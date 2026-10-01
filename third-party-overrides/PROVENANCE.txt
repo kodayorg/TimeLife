@@ -1,0 +1,5 @@
+@nodable/entities 3.1.0 npm metadata: MIT; author Amit Gupta; repository github.com/nodable/val-parsers.
+The npm tarball omits a standalone LICENSE. The repository license was retrieved unchanged on 2026-10-01 from:
+https://raw.githubusercontent.com/nodable/val-parsers/main/LICENSE
+SHA256: 750cb3fb6362804957ef52caaf9b5c824015be44d494637330d7cd8834d31d40
+Copyright (c) 2026 Nodable. Recheck attribution when updating this dependency.

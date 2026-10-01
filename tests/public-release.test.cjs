@@ -1,0 +1,3 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {configurationErrors}=require('../scripts/check-public-release.cjs');
+test('public release blocks missing identity, unreviewed documents and unavailable signing',()=>{const errors=configurationErrors({channel:'exe',publisherName:'',supportEmail:'invalid',countries:[],documentsApproved:false},false);assert.ok(errors.length>=4);const c={channel:'exe',publisherName:'Koda Yorg',supportEmail:'kodayorg@gmail.com',countries:['Worldwide'],documentsApproved:true,repositoryUrl:'https://github.com/example/timelife'};assert.deepEqual(configurationErrors(c,false),[]);assert.ok(configurationErrors({...c,channel:'msix'},false).length>0);});
