@@ -2,7 +2,7 @@ from pathlib import Path
 import zipfile, json, hashlib
 root = Path(__file__).resolve().parent.parent
 version = json.loads((root / 'package.json').read_text(encoding='utf-8'))['version']
-files = ['package.json','pnpm-lock.yaml','pnpm-workspace.yaml','.gitignore','release-publisher.json','LICENSE','README.md','CONTRIBUTING.md','SECURITY.md','CODE_SIGNING_POLICY.md','PUBLIC_RELEASE.md']
+files = ['package.json','pnpm-lock.yaml','pnpm-workspace.yaml','.gitignore','release-publisher.json','LICENSE','README.md','CONTRIBUTING.md','SECURITY.md','CODE_SIGNING_POLICY.md']
 dirs = ['src','scripts','tests','build','third-party-overrides','distribution/legal']
 paths = [root / file for file in files]
 for directory in dirs:
